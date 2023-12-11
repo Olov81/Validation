@@ -5,7 +5,7 @@ public static class PropertyValidatorExtensions
     public static PropertyValidator<T, string> MinLength<T>(
         this PropertyValidator<T, string> validator, int minLength)
     {
-        return validator.Use(s => s != null && s.Length >= minLength, $"MinLength({minLength})");
+        return validator.Use(s => s.Length >= minLength, $"MinLength({minLength})");
     }
 
     public static PropertyValidator<T, TProperty> MinValue<T, TProperty>(

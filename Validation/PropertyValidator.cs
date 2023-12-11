@@ -1,15 +1,15 @@
-using System.Linq.Expressions;
-
 namespace Validation;
 
 public class PropertyValidator<T, TProperty> : IValidator<T>
 {
-    private readonly Expression<Func<T, TProperty>> _getProperty;
+    private readonly Func<T, TProperty> _getProperty;
+    private readonly string _propertyName;
     private readonly List<IValidator<TProperty>> _validators = new();
 
-    public PropertyValidator(Expression<Func<T, TProperty>> getProperty)
+    public PropertyValidator(Func<T, TProperty> getProperty, string propertyName)
     {
         _getProperty = getProperty;
+        _propertyName = propertyName;
     }
 
     public PropertyValidator<T, TProperty> Use(Func<TProperty, bool> rule, string description)
@@ -26,14 +26,13 @@ public class PropertyValidator<T, TProperty> : IValidator<T>
 
     public IEnumerable<ValidationResult> Validate(T t)
     {
-        var value = _getProperty.Compile()(t);
-        var propertyName = PropertyHelper.GetPropertyName(_getProperty);
+        var value = _getProperty(t);
             
         return _validators
             .SelectMany(x => x.Validate(value))
             .Select(r =>
             {
-                var name = string.IsNullOrEmpty(r.PropertyName) ? propertyName : $"{propertyName}.{r.PropertyName}";
+                var name = string.IsNullOrEmpty(r.PropertyName) ? _propertyName : $"{_propertyName}.{r.PropertyName}";
                 return new ValidationResult(name, r.IsValid, r.Description);
             });
     }
