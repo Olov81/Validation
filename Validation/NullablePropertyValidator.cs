@@ -20,12 +20,16 @@ public class NullablePropertyValidator<T, TProperty> : IValidator<T> where TProp
     {
         var value = _getProperty(t);
 
-        if (value == null)
+        if (_isRequired)
         {
-            return _isRequired ? CreateValidationResult(false) : new List<ValidationResult>();
+            return value == null 
+                ? CreateValidationResult(false) 
+                : CreateValidationResult(true).Concat(InnerValidator.Validate(t));
         }
-
-        return CreateValidationResult(true).Concat(InnerValidator.Validate(t));
+        
+        return value == null
+            ? new List<ValidationResult>() 
+            : InnerValidator.Validate(t);
     }
 
     private IEnumerable<ValidationResult> CreateValidationResult(bool isValid)
