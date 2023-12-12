@@ -9,7 +9,7 @@ public class Tests
     public void Apa()
     {
         var validator = ValidatorBuilder<MyEditObject>.Create(
-            b => b.Require(x => x.Name).MinLength(1),
+            b => b.Require(x => x.Name).MinLength(1).Email(),
             b => b.Require(x => x.IntValue).MinValue(10).MaxValue(100),
             b => b.Value(x => x.LongValue).Range(1, 10),
             b => b.Value(x => x.DoubleValue).MinValue(10).Use(double.IsFinite, "Finite"),
@@ -22,6 +22,7 @@ public class Tests
             
         var result = validator.Validate(new MyEditObject
         {
+            Name = "apa@bepa.com",
             IntValue = 15,
             NestedObject = new NestedObjectClass
             {

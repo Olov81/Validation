@@ -1,3 +1,6 @@
+using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
+
 namespace Validation;
 
 public static class PropertyValidatorExtensions
@@ -8,6 +11,12 @@ public static class PropertyValidatorExtensions
         return validator.Use(s => s.Length >= minLength, $"MinLength({minLength})");
     }
 
+    public static PropertyValidator<T, string> Email<T>(this PropertyValidator<T, string> validator)
+    {
+        var attribute = new EmailAddressAttribute();
+        return validator.Use(s => attribute.IsValid(s), attribute.GetDataTypeName());
+    }
+    
     public static PropertyValidator<T, TProperty> MinValue<T, TProperty>(
         this PropertyValidator<T, TProperty> validator, TProperty minValue)
         where TProperty : IComparable<TProperty>
