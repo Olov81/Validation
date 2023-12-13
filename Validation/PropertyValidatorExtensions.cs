@@ -39,9 +39,23 @@ public static class PropertyValidatorExtensions
         return validator.MinValue(maxValue);
     }
         
+    public static PropertyValidator<T, TProperty[]> Where<T, TProperty>(
+        this PropertyValidator<T, TProperty[]> validator, Func<PropertyValidator<T, TProperty>, PropertyValidator<T, TProperty>> configure) 
+        where TProperty : IComparable<TProperty>
+    {
+        return validator;
+    }
+    
     public static PropertyValidator<T, TProperty> Use<T, TProperty>(
         this PropertyValidator<T, TProperty> validator, params Action<ValidatorBuilder<TProperty>>[] configure) 
         where TProperty : class
+    {
+        return validator.Use(ValidatorBuilder<TProperty>.Create(configure));
+    }
+    
+    public static PropertyValidator<T, TProperty> Use<T, TProperty>(
+        this PropertyValidator<T, TProperty> validator,
+        Func<ValidatorBuilder<TProperty>, IValidator<TProperty>[]> configure)
     {
         return validator.Use(ValidatorBuilder<TProperty>.Create(configure));
     }

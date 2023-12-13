@@ -5,6 +5,12 @@ namespace Validation;
 public class ValidatorBuilder<T>
 {
     private readonly List<IValidator<T>> _validators = new();
+
+    public static Validator<T> Create(Func<ValidatorBuilder<T>, IValidator<T>[]> configure)
+    {
+        var builder = new ValidatorBuilder<T>();
+        return new Validator<T>(configure(builder));    
+    }
     
     public static Validator<T> Create(params Action<ValidatorBuilder<T>>[] configure)
     {
